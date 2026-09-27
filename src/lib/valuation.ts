@@ -1,0 +1,7 @@
+import type {Asset,Quote} from './cloud';
+export const mappingKey=(a:Asset)=>[a.provider,a.provider_id,a.exchange,a.currency].join('|');
+export const rp=(v:number)=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(v);
+export const dateText=(s:string|null|undefined)=>s?new Date(s).toLocaleString('id-ID',{timeZone:'Asia/Jakarta',dateStyle:'medium',timeStyle:'short'})+' WIB':'Belum tersedia';
+export function quoteFor(a:Asset,qs:Quote[]){return qs.find(q=>q.asset_id===a.id&&q.mapping_key===mappingKey(a));}
+export function label(q:Quote|undefined){if(!q||q.price_idr===null)return 'Belum ada harga';if(q.error)return 'Data terakhir · gagal diperbarui';if(q.status==='manual')return 'Manual';const age=Date.now()-Date.parse(q.as_of||'');if(!Number.isFinite(age)||age>7*86400000)return 'Data lama';if(q.fx_as_of&&Date.now()-Date.parse(q.fx_as_of)>4*86400000)return 'Kurs lama';if(q.status==='nav')return 'NAB harian';if(q.status==='eod')return 'Akhir hari';if(q.market_open===false)return 'Pasar tutup';if(q.status==='delayed')return 'Tertunda';if(age>5*60000)return 'Snapshot · cek waktu';if(q.status==='automatic')return 'Otomatis';return 'Snapshot penyedia';}
+export function totals(assets:Asset[],quotes:Quote[]){let value=0,pricedCost=0,missing=0;for(const a of assets){const q=quoteFor(a,quotes);if(q?.price_idr!=null){value+=Number(a.qty)*Number(q.price_idr);pricedCost+=Number(a.cost);}else missing++;}return {value,pricedCost,cost:assets.reduce((s,a)=>s+Number(a.cost),0),gain:value-pricedCost,missing};}

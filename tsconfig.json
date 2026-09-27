@@ -1,0 +1,1 @@
+{"compilerOptions": {"target": "ES2022", "module": "ESNext", "jsx": "react-jsx", "moduleResolution": "bundler", "baseUrl": ".", "paths": {"@/*": ["src/*"]}, "strict": true, "skipLibCheck": true, "esModuleInterop": true, "lib": ["DOM", "ES2022"]}, "include": ["src"]}

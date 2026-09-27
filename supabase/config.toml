@@ -1,0 +1,5 @@
+project_id = "arbor-capital"
+[functions.market-data]
+verify_jwt = false
+# The handler validates every bearer JWT through Supabase Auth /user,
+# then checks current database membership. It rejects pending/blocked users.
